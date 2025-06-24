@@ -234,6 +234,7 @@ jobs:
               echo "${REGISTRY}/${IMAGE_TAG_LATEST}       ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
             fi
             while read manifest; do
+              echo manifests: 1: $(awk '{print $1}' <<< ${manifest}) 2: $(awk '{print $2}' <<< ${manifest}) 3: $(awk '{print $3}' <<< ${manifest})
               docker manifest create $(awk '{print $1}' <<< ${manifest}) $(awk '{print $2}' <<< ${manifest}) $(awk '{print $3}' <<< ${manifest})
             done < manifest.list
           on_retry_command:
