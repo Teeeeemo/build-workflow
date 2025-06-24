@@ -5,7 +5,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    # runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         architecture: [linux-arm64, linux-amd64]
@@ -14,12 +15,17 @@ jobs:
       is-latest:                ${{ steps.prep.outputs.is-latest }}
       description:              ${{ steps.prep.outputs.description }}
       hide:                     ${{ steps.prep.outputs.hide }}
-      image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}
-      image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}
-      image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
-      image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
-      image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
-      image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
+      # image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}
+      # image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}
+      # image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
+      # image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
+      # image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
+      # image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
+      image-tag-full-amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
+      image-tag-full-arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
+      image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
+      image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
+      image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
       package-version:          ${{ steps.prep.outputs.package-version }}
     steps:
       - name: Checkout
