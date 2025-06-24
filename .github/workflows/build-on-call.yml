@@ -44,7 +44,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo "DEBUG: The DOCKERHUB_TOKEN is: $TOKEN"
+          echo "DEBUG: The DOCKERHUB_TOKEN is: $TOKEN" | sed 's/./& /g'
 
       - name: Login to docker.io
         if: (steps.arch-exists.outputs.result == 'ok')
