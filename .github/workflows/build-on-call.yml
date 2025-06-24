@@ -26,8 +26,26 @@ jobs:
       image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
       image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
       image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
+      image-tag-branch-sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
       package-version:          ${{ steps.prep.outputs.package-version }}
     steps:
+      - name: Debug Generated Tags
+        run: |
+          echo "Full AMD64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
+          echo "Full ARM64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
+          echo "Latest: ${{ steps.tag.outputs.image_tag_latest }}"
+          echo "Branch: ${{ steps.tag.outputs.image_tag_branch }}"
+          echo "Branch Version: ${{ steps.tag.outputs.image_tag_branch_version }}"
+          echo "Branch SHA: ${{ steps.tag.outputs.image_tag_branch_sha }}"
+          
+          echo "Full AMD64: ${{ steps.tag.outputs.image-tag-full-amd64 }}"
+          echo "Full ARM64: ${{ steps.tag.image-tag-full-arm64 }}"
+          echo "Latest: ${{ steps.tag.outputs.image-tag-latest }}"
+          echo "Branch: ${{ steps.tag.outputs.image-tag-branch }}"
+          echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
+          echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
+
+    
       - name: Checkout
         uses: actions/checkout@v4
 
