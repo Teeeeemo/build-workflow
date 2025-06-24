@@ -40,7 +40,7 @@ jobs:
         if: (steps.arch-exists.outputs.result == 'ok')
         uses: docker/setup-buildx-action@v3
 
-      # - name: Login to docker.io - w
+      # - name: Login to docker.io
       #   run: |
       #     echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
       
@@ -183,11 +183,11 @@ jobs:
     needs: [build]
     steps:
     
-      - name: Debug DOCKERHUB_TOKEN secret
-        env:
-          TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          echo "DEBUG: The DOCKERHUB_TOKEN is: $TOKEN" | sed 's/./& /g'
+      # - name: Debug DOCKERHUB_TOKEN secret
+      #   env:
+      #     TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      #   run: |
+      #     echo "DEBUG: The DOCKERHUB_TOKEN is: $TOKEN" | sed 's/./& /g'
       
       - name: Login to docker.io
         if: (matrix.registry == 'docker.io')
