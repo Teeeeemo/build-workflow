@@ -15,18 +15,18 @@ jobs:
       is-latest:                ${{ steps.prep.outputs.is-latest }}
       description:              ${{ steps.prep.outputs.description }}
       hide:                     ${{ steps.prep.outputs.hide }}
-      # image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}
-      # image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}
-      # image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
-      # image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
-      # image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
-      # image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
-      image-tag-full-amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
-      image-tag-full-arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
-      image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
-      image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
-      image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
-      image-tag-branch-sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
+      image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}
+      image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}
+      image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
+      image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
+      image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
+      image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
+      # image-tag-full-amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
+      # image-tag-full-arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
+      # image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
+      # image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
+      # image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
+      # image-tag-branch-sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
       package-version:          ${{ steps.prep.outputs.package-version }}
     steps:
       - name: Checkout
@@ -182,15 +182,15 @@ jobs:
           path: |
             ${{ steps.prep.outputs.package-version }}-*.*
 
-      # - name: Generate Tags
-      #   id: tag
-      #   run: |
-      #     echo "image_tag_full_amd64=myrepo:myimage-amd64" >> $GITHUB_OUTPUT
-      #     echo "image_tag_full_arm64=myrepo:myimage-arm64" >> $GITHUB_OUTPUT
-      #     echo "image_tag_latest=myrepo:latest" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch=myrepo:branch" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
+      - name: Generate Tags
+        id: tag
+        run: |
+          echo "image_tag_full_amd64=myrepo:myimage-amd64" >> $GITHUB_OUTPUT
+          echo "image_tag_full_arm64=myrepo:myimage-arm64" >> $GITHUB_OUTPUT
+          echo "image_tag_latest=myrepo:latest" >> $GITHUB_OUTPUT
+          echo "image_tag_branch=myrepo:branch" >> $GITHUB_OUTPUT
+          echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
+          echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
 
   publish:
     runs-on: ubuntu-24.04
@@ -200,32 +200,32 @@ jobs:
     needs: [build]
     steps:
     
-      - name: Debug Generated Tags
-        run: |
-          echo "Full AMD64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
-          echo "Full ARM64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
-          echo "Latest: ${{ steps.tag.outputs.image_tag_latest }}"
-          echo "Branch: ${{ steps.tag.outputs.image_tag_branch }}"
-          echo "Branch Version: ${{ steps.tag.outputs.image_tag_branch_version }}"
-          echo "Branch SHA: ${{ steps.tag.outputs.image_tag_branch_sha }}"
-          echo "---"
-          echo "Full AMD64: ${{ steps.tag.outputs.image-tag-full-amd64 }}"
-          echo "Full ARM64: ${{ steps.tag.image-tag-full-arm64 }}"
-          echo "Latest: ${{ steps.tag.outputs.image-tag-latest }}"
-          echo "Branch: ${{ steps.tag.outputs.image-tag-branch }}"
-          echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
-          echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
-          echo "---"
-          echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }}"
-          echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
-          echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
-          echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }}"
-          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}}"
-          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}}"
-          echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}}"
-          echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}}"
-          echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}}"
-          echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}}"
+      # - name: Debug Generated Tags
+      #   run: |
+      #     echo "Full AMD64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
+      #     echo "Full ARM64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
+      #     echo "Latest: ${{ steps.tag.outputs.image_tag_latest }}"
+      #     echo "Branch: ${{ steps.tag.outputs.image_tag_branch }}"
+      #     echo "Branch Version: ${{ steps.tag.outputs.image_tag_branch_version }}"
+      #     echo "Branch SHA: ${{ steps.tag.outputs.image_tag_branch_sha }}"
+      #     echo "---"
+      #     echo "Full AMD64: ${{ steps.tag.outputs.image-tag-full-amd64 }}"
+      #     echo "Full ARM64: ${{ steps.tag.image-tag-full-arm64 }}"
+      #     echo "Latest: ${{ steps.tag.outputs.image-tag-latest }}"
+      #     echo "Branch: ${{ steps.tag.outputs.image-tag-branch }}"
+      #     echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
+      #     echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
+      #     echo "---"
+      #     echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }}"
+      #     echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
+      #     echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
+      #     echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }}"
+      #     echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}}"
+      #     echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}}"
+      #     echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}}"
+      #     echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}}"
+      #     echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}}"
+      #     echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}}"
     
       # - name: Debug DOCKERHUB_TOKEN secret
       #   env:
