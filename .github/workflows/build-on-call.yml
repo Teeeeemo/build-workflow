@@ -37,15 +37,14 @@ jobs:
           echo "Branch: ${{ steps.tag.outputs.image_tag_branch }}"
           echo "Branch Version: ${{ steps.tag.outputs.image_tag_branch_version }}"
           echo "Branch SHA: ${{ steps.tag.outputs.image_tag_branch_sha }}"
-          
+          echo "---"
           echo "Full AMD64: ${{ steps.tag.outputs.image-tag-full-amd64 }}"
           echo "Full ARM64: ${{ steps.tag.image-tag-full-arm64 }}"
           echo "Latest: ${{ steps.tag.outputs.image-tag-latest }}"
           echo "Branch: ${{ steps.tag.outputs.image-tag-branch }}"
           echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
           echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
-
-
+          echo "---"
           echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }} >> $GITHUB_OUTPUT
           echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }} >> $GITHUB_OUTPUT
           echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }} >> $GITHUB_OUTPUT
