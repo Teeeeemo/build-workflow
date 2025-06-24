@@ -45,16 +45,16 @@ jobs:
           echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
           echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
           echo "---"
-          echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }} >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }} >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }} >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }} >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}" >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}" >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}" >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}" >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}" >> $GITHUB_OUTPUT
-          echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}" >> $GITHUB_OUTPUT
+          echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }}"
+          echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
+          echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
+          echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }}"
+          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}}"
+          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}}"
+          echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}}"
+          echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}}"
+          echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}}"
+          echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}}"
     
       - name: Checkout
         uses: actions/checkout@v4
