@@ -233,6 +233,23 @@ jobs:
           echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
           echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
 
+      - name: print outputs
+        id: print
+        run: |
+          echo "image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}"
+          echo "image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}"
+          echo "image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}"
+          echo "image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}"
+          echo "image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}"
+          echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
+
+          echo "image_tag_full_amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
+          echo "image_tag_full_arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
+          echo "image_tag_latest:     ${{ steps.tag.outputs.image_tag_latest }}"
+          echo "image_tag_branch:     ${{ steps.tag.outputs.image_tag_branch }}"
+          echo "image_tag_branch_version: ${{ steps.tag.outputs.image_tag_branch_version }}"
+          echo "image_tag_branch_sha: ${{ steps.tag.outputs.image_tag_branch_sha }}"
+
   publish:
     runs-on: ubuntu-24.04
     strategy:
