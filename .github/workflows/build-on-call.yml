@@ -217,6 +217,7 @@ jobs:
           echo "image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}"
           echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
 
+
   aggregate:
     needs: build
     runs-on: ubuntu-latest
@@ -233,7 +234,8 @@ jobs:
       hide: ${{ needs.build.outputs.hide }}
       package-version: ${{ needs.build.outputs['package-version'] }}
     steps:
-      - run: echo "Aggregating build outputs"
+      - name: Aggregating build outputs
+        run: echo "Aggregating outputs from build matrix"
 
   publish:
     runs-on: ubuntu-24.04
@@ -242,7 +244,6 @@ jobs:
         registry: [docker.io, ghcr.io]
     needs: aggregate
     steps:
-      # Use aggregate outputs here, for example:
       - name: Debug Generated Tags
         run: |
           echo "Full AMD64: ${{ needs.aggregate.outputs.image-tag-full-amd64 }}"
@@ -336,11 +337,15 @@ jobs:
             done < manifest.list
 
 
+
   tags:
     runs-on: ubuntu-24.04
     needs: [aggregate, publish]
     steps:
-      # Use aggregate outputs here for tags.json update, for example:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
       - name: Update "tags.json" File
         env:
           IMAGE_TAG_BRANCH: ${{ needs.aggregate.outputs.image-tag-branch }}
@@ -349,9 +354,6 @@ jobs:
           IS_LATEST: ${{ needs.aggregate.outputs.is-latest }}
           DESCRIPTION: ${{ needs.aggregate.outputs.description }}
           HIDE: ${{ needs.aggregate.outputs.hide }}
-          IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image-tag-branch }}
-          IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image-tag-branch-version }}
-          IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image-tag-branch-sha }}
         with:
           max_attempts: 3
           timeout_minutes: 5
@@ -385,12 +387,12 @@ jobs:
             git push
 
 
+
   notify:
     runs-on: ubuntu-24.04
     if: always()
     needs: [aggregate, publish]
     steps:
-      # Use aggregate outputs here for notification, for example:
       - name: Send Discord Notification
         env:
           VERSION: ${{ needs.aggregate.outputs.version }}
@@ -403,7 +405,9 @@ jobs:
           REPOSITORY:       ${{ github.repository }}
           SHA:              ${{ github.sha }}
           SERVER_URL:       ${{ github.server_url }}
+          IMAGE_TAG_BRANCH: ${{ needs.build.outputs.image-tag-branch }}
           DISCORD_MENTIONS: ${{ vars.DISCORD_MENTIONS }}
+          PACKAGE_VERSION:  ${{ needs.build.outputs.package-version }}
         with:
           max_attempts: 3
           timeout_minutes: 5
