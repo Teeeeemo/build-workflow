@@ -235,7 +235,18 @@ jobs:
       package-version: ${{ needs.build.outputs['package-version'] }}
     steps:
       - name: Aggregating build outputs
-        run: echo "Aggregating outputs from build matrix"
+        run: |
+          echo "image-tag-full-amd64: ${{ needs.build.outputs['image-tag-full-linux-amd64'] }}"
+          echo "image-tag-full-arm64: ${{ needs.build.outputs['image-tag-full-linux-arm64'] }}"
+          echo "image-tag-latest: ${{ needs.build.outputs['image-tag-latest'] }}"
+          echo "image-tag-branch: ${{ needs.build.outputs['image-tag-branch'] }}"
+          echo "image-tag-branch-version: ${{ needs.build.outputs['image-tag-branch-version'] }}"
+          echo "image-tag-branch-sha: ${{ needs.build.outputs['image-tag-branch-sha'] }}"
+          echo "version: ${{ needs.build.outputs.version }}"
+          echo "is-latest: ${{ needs.build.outputs.is-latest }}"
+          echo "description: ${{ needs.build.outputs.description }}"
+          echo "hide: ${{ needs.build.outputs.hide }}"
+          echo "package-version: ${{ needs.build.outputs['package-version'] }}"
 
   publish:
     runs-on: ubuntu-24.04
