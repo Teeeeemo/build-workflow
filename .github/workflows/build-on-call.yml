@@ -218,7 +218,7 @@ jobs:
           echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
 
       - name: Prep outputs
-        id: prep
+        id: prepo
         run: |
           echo "image-tag-full-${{ matrix.architecture }}:${{ needs.build.outputs['image-tag-full-linux-${{ matrix.architecture }}'] }}"
           echo "image-tag-latest:${{ needs.build.outputs['image-tag-latest'] }}"
@@ -241,18 +241,23 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     outputs:
-      image-tag-full-amd64: ${{ needs.build.outputs['image-tag-full-linux-amd64'] }}
-      image-tag-full-arm64: ${{ needs.build.outputs['image-tag-full-linux-arm64'] }}
-      image-tag-latest: ${{ needs.build.outputs['image-tag-latest'] }}
-      image-tag-branch: ${{ needs.build.outputs['image-tag-branch'] }}
-      image-tag-branch-version: ${{ needs.build.outputs['image-tag-branch-version'] }}
-      image-tag-branch-sha: ${{ needs.build.outputs['image-tag-branch-sha'] }}
-      version: ${{ needs.build.outputs.version }}
-      is-latest: ${{ needs.build.outputs.is-latest }}
-      description: ${{ needs.build.outputs.description }}
-      hide: ${{ needs.build.outputs.hide }}
-      package-version: ${{ needs.build.outputs['package-version'] }}
+      image-tag-full-amd64: ${{ steps.set-outputs.outputs.amd64 }}
+      image-tag-full-arm64: ${{ steps.set-outputs.outputs.arm64 }}
     steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          for arch in amd64 arm64; do
+            file="artifacts/outputs-linux-$arch/outputs.txt"
+            value=$(grep 'image-tag-full=' "$file" | cut -d= -f2-)
+            echo "$arch=$value" >> $GITHUB_OUTPUT
+          done
+        
       - name: Aggregating build outputs
         run: |
           echo "image-tag-full-amd64: ${{ needs.build.outputs['image-tag-full-linux-amd64'] }}"
