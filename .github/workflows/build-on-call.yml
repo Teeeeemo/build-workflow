@@ -87,38 +87,70 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SHA:              ${{ github.sha }}
           SERVER_URL:       ${{ github.server_url }}
+        # run: |
+        #   VERSION=$(jq -r '.version // empty' < VERSION.json)
+        #   VERSION=${VERSION//\~/-}
+        #   [[ -z ${VERSION} ]] && VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
+        #   PR_BRANCH=$(jq -r '.branch // empty' < VERSION.json)
+        #   [[ -n ${PR_BRANCH} ]] && PR_BRANCH=-${PR_BRANCH}
+        #   echo "is-latest=$(jq -r '.latest // false' < VERSION.json)" >> $GITHUB_OUTPUT
+        #   echo "description=$(jq -r '.description // empty' < VERSION.json)" >> $GITHUB_OUTPUT
+        #   echo "hide=$(jq -r '.hide // false' < VERSION.json)" >> $GITHUB_OUTPUT
+        #   echo "created=$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')" >> $GITHUB_OUTPUT
+        #   echo "revision=${SHA}" >> $GITHUB_OUTPUT
+        #   echo "source=${SERVER_URL}/${REPOSITORY}/tree/${BRANCH}" >> $GITHUB_OUTPUT
+        #   echo "vendor=${REPOSITORY_OWNER}" >> $GITHUB_OUTPUT
+        #   echo "url=https://hotio.dev/containers/${REPOSITORY/${REPOSITORY_OWNER}\//}" >> $GITHUB_OUTPUT
+        #   echo "platform=${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
+        #   echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        #   echo "package-version=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-cache=${REPOSITORY}:${BRANCH}${PR_BRANCH}-buildcache-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-full=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-full-${ARCHITECTURE/linux-/}=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-branch=${REPOSITORY}:${BRANCH}${PR_BRANCH}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-branch-version=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${VERSION}" >> $GITHUB_OUTPUT
+        #   echo "image-tag-branch-sha=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+        #   [[ $(jq -r '.latest // empty' < VERSION.json) == true ]] && echo "image-tag-latest=${REPOSITORY}:latest" >> $GITHUB_OUTPUT
+        #   [[ ${ARCHITECTURE} == linux-amd64 ]] && [[ $(jq -r '.test_amd64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
+        #   [[ ${ARCHITECTURE} == linux-arm64 ]] && [[ $(jq -r '.test_arm64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
+        #   echo 'build-args<<EOF' >> $GITHUB_OUTPUT
+        #     jq -r 'to_entries[] | [(.key | ascii_upcase),.value] | join("=")' < VERSION.json >> $GITHUB_OUTPUT
+        #     echo "BUILD_ARCHITECTURE=${ARCHITECTURE}" >> $GITHUB_OUTPUT
+        #     echo "PACKAGE_VERSION=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+        #     echo "IMAGE_STATS=$(jq '.app = "'"${REPOSITORY/${REPOSITORY_OWNER}\//}"'" | .image = "'"${REPOSITORY}:${BRANCH}${PR_BRANCH}"'" | .revision = "'"${SHA:0:7}"'" | .version = "'"${VERSION}"'"' <<< "{}" | base64 -w 0)" >> $GITHUB_OUTPUT
+        #   echo 'EOF' >> $GITHUB_OUTPUT
         run: |
           VERSION=$(jq -r '.version // empty' < VERSION.json)
           VERSION=${VERSION//\~/-}
           [[ -z ${VERSION} ]] && VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
           PR_BRANCH=$(jq -r '.branch // empty' < VERSION.json)
           [[ -n ${PR_BRANCH} ]] && PR_BRANCH=-${PR_BRANCH}
-          echo "is-latest=$(jq -r '.latest // false' < VERSION.json)" >> $GITHUB_OUTPUT
-          echo "description=$(jq -r '.description // empty' < VERSION.json)" >> $GITHUB_OUTPUT
-          echo "hide=$(jq -r '.hide // false' < VERSION.json)" >> $GITHUB_OUTPUT
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')" >> $GITHUB_OUTPUT
-          echo "revision=${SHA}" >> $GITHUB_OUTPUT
-          echo "source=${SERVER_URL}/${REPOSITORY}/tree/${BRANCH}" >> $GITHUB_OUTPUT
-          echo "vendor=${REPOSITORY_OWNER}" >> $GITHUB_OUTPUT
-          echo "url=https://hotio.dev/containers/${REPOSITORY/${REPOSITORY_OWNER}\//}" >> $GITHUB_OUTPUT
-          echo "platform=${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "package-version=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
-          echo "image-tag-cache=${REPOSITORY}:${BRANCH}${PR_BRANCH}-buildcache-${ARCHITECTURE}" >> $GITHUB_OUTPUT
-          echo "image-tag-full=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
-          echo "image-tag-full-${ARCHITECTURE/linux-/}=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
-          echo "image-tag-branch=${REPOSITORY}:${BRANCH}${PR_BRANCH}" >> $GITHUB_OUTPUT
-          echo "image-tag-branch-version=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${VERSION}" >> $GITHUB_OUTPUT
-          echo "image-tag-branch-sha=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
-          [[ $(jq -r '.latest // empty' < VERSION.json) == true ]] && echo "image-tag-latest=${REPOSITORY}:latest" >> $GITHUB_OUTPUT
-          [[ ${ARCHITECTURE} == linux-amd64 ]] && [[ $(jq -r '.test_amd64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
-          [[ ${ARCHITECTURE} == linux-arm64 ]] && [[ $(jq -r '.test_arm64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
-          echo 'build-args<<EOF' >> $GITHUB_OUTPUT
-            jq -r 'to_entries[] | [(.key | ascii_upcase),.value] | join("=")' < VERSION.json >> $GITHUB_OUTPUT
-            echo "BUILD_ARCHITECTURE=${ARCHITECTURE}" >> $GITHUB_OUTPUT
-            echo "PACKAGE_VERSION=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
-            echo "IMAGE_STATS=$(jq '.app = "'"${REPOSITORY/${REPOSITORY_OWNER}\//}"'" | .image = "'"${REPOSITORY}:${BRANCH}${PR_BRANCH}"'" | .revision = "'"${SHA:0:7}"'" | .version = "'"${VERSION}"'"' <<< "{}" | base64 -w 0)" >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "is-latest=$(jq -r '.latest // false' < VERSION.json)" | tee -a $GITHUB_OUTPUT
+          echo "description=$(jq -r '.description // empty' < VERSION.json)" | tee -a $GITHUB_OUTPUT
+          echo "hide=$(jq -r '.hide // false' < VERSION.json)" | tee -a $GITHUB_OUTPUT
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')" | tee -a $GITHUB_OUTPUT
+          echo "revision=${SHA}" | tee -a $GITHUB_OUTPUT
+          echo "source=${SERVER_URL}/${REPOSITORY}/tree/${BRANCH}" | tee -a $GITHUB_OUTPUT
+          echo "vendor=${REPOSITORY_OWNER}" | tee -a $GITHUB_OUTPUT
+          echo "url=https://hotio.dev/containers/${REPOSITORY/${REPOSITORY_OWNER}\//}" | tee -a $GITHUB_OUTPUT
+          echo "platform=${ARCHITECTURE//-/\/}" | tee -a $GITHUB_OUTPUT
+          echo "version=${VERSION}" | tee -a $GITHUB_OUTPUT
+          echo "package-version=${BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-cache=${REPOSITORY}:${BRANCH}${PR_BRANCH}-buildcache-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-full=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-full-${ARCHITECTURE/linux-/}=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-branch=${REPOSITORY}:${BRANCH}${PR_BRANCH}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-branch-version=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${VERSION}" | tee -a $GITHUB_OUTPUT
+          echo "image-tag-branch-sha=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
+          [[ $(jq -r '.latest // empty' < VERSION.json) == true ]] && echo "image-tag-latest=${REPOSITORY}:latest" | tee -a $GITHUB_OUTPUT
+          [[ ${ARCHITECTURE} == linux-amd64 ]] && [[ $(jq -r '.test_amd64' < VERSION.json) == true ]] && echo "do_smoketest=ok" | tee -a $GITHUB_OUTPUT
+          [[ ${ARCHITECTURE} == linux-arm64 ]] && [[ $(jq -r '.test_arm64' < VERSION.json) == true ]] && echo "do_smoketest=ok" | tee -a $GITHUB_OUTPUT
+          echo 'build-args<<EOF' | tee -a $GITHUB_OUTPUT
+            jq -r 'to_entries[] | [(.key | ascii_upcase),.value] | join("=")' < VERSION.json | tee -a $GITHUB_OUTPUT
+            echo "BUILD_ARCHITECTURE=${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
+            echo "PACKAGE_VERSION=${BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
+            echo "IMAGE_STATS=$(jq '.app = "'"${REPOSITORY/${REPOSITORY_OWNER}\//}"'" | .image = "'"${REPOSITORY}:${BRANCH}${PR_BRANCH}"'" | .revision = "'"${SHA:0:7}"'" | .version = "'"${VERSION}"'"' <<< "{}" | base64 -w 0)" | tee -a $GITHUB_OUTPUT
+          echo 'EOF' | tee -a $GITHUB_OUTPUT
 
       - name: Build Image
         if: (steps.arch-exists.outputs.result == 'ok')
@@ -229,12 +261,12 @@ jobs:
           echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
           echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
           echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }}"
-          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}}"
-          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}}"
-          echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}}"
-          echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}}"
-          echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}}"
-          echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}}"
+          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}"
+          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}"
+          echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}"
+          echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}"
+          echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}"
+          echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}"
     
       # - name: Debug DOCKERHUB_TOKEN secret
       #   env:
