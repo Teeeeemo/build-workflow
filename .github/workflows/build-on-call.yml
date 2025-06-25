@@ -21,12 +21,21 @@ jobs:
       image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
       image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
       image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
+
+      image_tag_full_amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
+      image_tag_full_arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
+      image_tag_latest:     ${{ steps.tag.outputs.image_tag_latest }}
+      image_tag_branch:     ${{ steps.tag.outputs.image_tag_branch }}
+      image_tag_branch_version: ${{ steps.tag.outputs.image_tag_branch_version }}
+      image_tag_branch_sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
+
       # image-tag-full-amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
       # image-tag-full-arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
       # image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
       # image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
       # image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
       # image-tag-branch-sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
+
       package-version:          ${{ steps.prep.outputs.package-version }}
     steps:
       - name: Checkout
@@ -259,6 +268,14 @@ jobs:
           IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image-tag-branch }}
           IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image-tag-branch-version }}
           IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image-tag-branch-sha }}
+
+          IMAGE_TAG_FULL_AMD64:     ${{ needs.build.outputs.image_tag_full_amd64 }}
+          IMAGE_TAG_FULL_ARM64:     ${{ needs.build.outputs.image_tag_full_arm64 }}
+          IMAGE_TAG_LATEST:         ${{ needs.build.outputs.image_tag_latest }}
+          IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image_tag_branch }}
+          IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image_tag_branch_version }}
+          IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image_tag_branch_sha }}
+          
           REGISTRY:                 ${{ matrix.registry }}
         with:
           max_attempts: 3
