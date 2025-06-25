@@ -268,6 +268,13 @@ jobs:
           echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}"
           echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}"
           echo "steps.prep.outputs.image-tag-branch-sha=${{ steps.prep.outputs.image-tag-branch-sha }}"
+          echo "-----"
+          echo "needs.build.outputs.image-tag-full-amd64 = ${{ needs.build.outputs.image-tag-full-amd64 }}"
+          echo "needs.build.outputs.image-tag-full-arm64 = ${{ needs.build.outputs.image-tag-full-arm64 }}"
+          echo "needs.build.outputs.image-tag-latest = ${{ needs.build.outputs.image-tag-latest }}"
+          echo "needs.build.outputs.image-tag-branch = ${{ needs.build.outputs.image-tag-branch }}"
+          echo "needs.build.outputs.image-tag-branch-version = ${{ needs.build.outputs.image-tag-branch-version }}"
+          echo "needs.build.outputs.image-tag-branch-sha = ${{ needs.build.outputs.image-tag-branch-sha }}"
     
       # - name: Debug DOCKERHUB_TOKEN secret
       #   env:
