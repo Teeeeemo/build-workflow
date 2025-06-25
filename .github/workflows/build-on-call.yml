@@ -269,12 +269,12 @@ jobs:
           IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image-tag-branch-version }}
           IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image-tag-branch-sha }}
 
-          IMAGE_TAG_FULL_AMD64:     ${{ needs.build.outputs.image_tag_full_amd64 }}
-          IMAGE_TAG_FULL_ARM64:     ${{ needs.build.outputs.image_tag_full_arm64 }}
-          IMAGE_TAG_LATEST:         ${{ needs.build.outputs.image_tag_latest }}
-          IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image_tag_branch }}
-          IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image_tag_branch_version }}
-          IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image_tag_branch_sha }}
+          IMAGE_TAG_FULL_AMD641:     ${{ needs.build.outputs.image_tag_full_amd64 }}
+          IMAGE_TAG_FULL_ARM641:     ${{ needs.build.outputs.image_tag_full_arm64 }}
+          IMAGE_TAG_LATEST1:         ${{ needs.build.outputs.image_tag_latest }}
+          IMAGE_TAG_BRANCH1:         ${{ needs.build.outputs.image_tag_branch }}
+          IMAGE_TAG_BRANCH_VERSION1: ${{ needs.build.outputs.image_tag_branch_version }}
+          IMAGE_TAG_BRANCH_SHA1:     ${{ needs.build.outputs.image_tag_branch_sha }}
           
           REGISTRY:                 ${{ matrix.registry }}
         with:
