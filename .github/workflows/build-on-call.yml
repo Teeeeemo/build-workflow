@@ -125,32 +125,32 @@ jobs:
           [[ -z ${VERSION} ]] && VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
           PR_BRANCH=$(jq -r '.branch // empty' < VERSION.json)
           [[ -n ${PR_BRANCH} ]] && PR_BRANCH=-${PR_BRANCH}
-          echo "is-latest=$(jq -r '.latest // false' < VERSION.json)" | tee -a $GITHUB_OUTPUT
-          echo "description=$(jq -r '.description // empty' < VERSION.json)" | tee -a $GITHUB_OUTPUT
-          echo "hide=$(jq -r '.hide // false' < VERSION.json)" | tee -a $GITHUB_OUTPUT
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')" | tee -a $GITHUB_OUTPUT
-          echo "revision=${SHA}" | tee -a $GITHUB_OUTPUT
-          echo "source=${SERVER_URL}/${REPOSITORY}/tree/${BRANCH}" | tee -a $GITHUB_OUTPUT
-          echo "vendor=${REPOSITORY_OWNER}" | tee -a $GITHUB_OUTPUT
-          echo "url=https://hotio.dev/containers/${REPOSITORY/${REPOSITORY_OWNER}\//}" | tee -a $GITHUB_OUTPUT
-          echo "platform=${ARCHITECTURE//-/\/}" | tee -a $GITHUB_OUTPUT
-          echo "version=${VERSION}" | tee -a $GITHUB_OUTPUT
-          echo "package-version=${BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-cache=${REPOSITORY}:${BRANCH}${PR_BRANCH}-buildcache-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-full=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-full-${ARCHITECTURE/linux-/}=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-branch=${REPOSITORY}:${BRANCH}${PR_BRANCH}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-branch-version=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${VERSION}" | tee -a $GITHUB_OUTPUT
-          echo "image-tag-branch-sha=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
-          [[ $(jq -r '.latest // empty' < VERSION.json) == true ]] && echo "image-tag-latest=${REPOSITORY}:latest" | tee -a $GITHUB_OUTPUT
-          [[ ${ARCHITECTURE} == linux-amd64 ]] && [[ $(jq -r '.test_amd64' < VERSION.json) == true ]] && echo "do_smoketest=ok" | tee -a $GITHUB_OUTPUT
-          [[ ${ARCHITECTURE} == linux-arm64 ]] && [[ $(jq -r '.test_arm64' < VERSION.json) == true ]] && echo "do_smoketest=ok" | tee -a $GITHUB_OUTPUT
-          echo 'build-args<<EOF' | tee -a $GITHUB_OUTPUT
-            jq -r 'to_entries[] | [(.key | ascii_upcase),.value] | join("=")' < VERSION.json | tee -a $GITHUB_OUTPUT
-            echo "BUILD_ARCHITECTURE=${ARCHITECTURE}" | tee -a $GITHUB_OUTPUT
-            echo "PACKAGE_VERSION=${BRANCH}-${SHA:0:7}" | tee -a $GITHUB_OUTPUT
-            echo "IMAGE_STATS=$(jq '.app = "'"${REPOSITORY/${REPOSITORY_OWNER}\//}"'" | .image = "'"${REPOSITORY}:${BRANCH}${PR_BRANCH}"'" | .revision = "'"${SHA:0:7}"'" | .version = "'"${VERSION}"'"' <<< "{}" | base64 -w 0)" | tee -a $GITHUB_OUTPUT
-          echo 'EOF' | tee -a $GITHUB_OUTPUT
+          echo "is-latest=$(jq -r '.latest // false' < VERSION.json)" >> $GITHUB_OUTPUT
+          echo "description=$(jq -r '.description // empty' < VERSION.json)" >> $GITHUB_OUTPUT
+          echo "hide=$(jq -r '.hide // false' < VERSION.json)" >> $GITHUB_OUTPUT
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')" >> $GITHUB_OUTPUT
+          echo "revision=${SHA}" >> $GITHUB_OUTPUT
+          echo "source=${SERVER_URL}/${REPOSITORY}/tree/${BRANCH}" >> $GITHUB_OUTPUT
+          echo "vendor=${REPOSITORY_OWNER}" >> $GITHUB_OUTPUT
+          echo "url=https://hotio.dev/containers/${REPOSITORY/${REPOSITORY_OWNER}\//}" >> $GITHUB_OUTPUT
+          echo "platform=${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "package-version=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "image-tag-cache=${REPOSITORY}:${BRANCH}${PR_BRANCH}-buildcache-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+          echo "image-tag-full=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+          echo "image-tag-full-${ARCHITECTURE/linux-/}=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}-${RUN_NUMBER}-${ARCHITECTURE}" >> $GITHUB_OUTPUT
+          echo "image-tag-branch=${REPOSITORY}:${BRANCH}${PR_BRANCH}" >> $GITHUB_OUTPUT
+          echo "image-tag-branch-version=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${VERSION}" >> $GITHUB_OUTPUT
+          echo "image-tag-branch-sha=${REPOSITORY}:${BRANCH}${PR_BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+          [[ $(jq -r '.latest // empty' < VERSION.json) == true ]] && echo "image-tag-latest=${REPOSITORY}:latest" >> $GITHUB_OUTPUT
+          [[ ${ARCHITECTURE} == linux-amd64 ]] && [[ $(jq -r '.test_amd64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
+          [[ ${ARCHITECTURE} == linux-arm64 ]] && [[ $(jq -r '.test_arm64' < VERSION.json) == true ]] && echo "do_smoketest=ok" >> $GITHUB_OUTPUT
+          echo 'build-args<<EOF' >> $GITHUB_OUTPUT
+            jq -r 'to_entries[] | [(.key | ascii_upcase),.value] | join("=")' < VERSION.json >> $GITHUB_OUTPUT
+            echo "BUILD_ARCHITECTURE=${ARCHITECTURE}" >> $GITHUB_OUTPUT
+            echo "PACKAGE_VERSION=${BRANCH}-${SHA:0:7}" >> $GITHUB_OUTPUT
+            echo "IMAGE_STATS=$(jq '.app = "'"${REPOSITORY/${REPOSITORY_OWNER}\//}"'" | .image = "'"${REPOSITORY}:${BRANCH}${PR_BRANCH}"'" | .revision = "'"${SHA:0:7}"'" | .version = "'"${VERSION}"'"' <<< "{}" | base64 -w 0)" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Build Image
         if: (steps.arch-exists.outputs.result == 'ok')
@@ -328,11 +328,11 @@ jobs:
             if [[ -n "${IMAGE_TAG_FULL_ARM64}" ]]; then
               IMAGE_TAG_FULL_ARM64=${REGISTRY}/${IMAGE_TAG_FULL_ARM64}
             fi
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH}         ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee manifest.list
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_VERSION} ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_SHA}     ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH}         ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" > manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_VERSION} ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_SHA}     ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
             if [[ -n "${IMAGE_TAG_LATEST}" ]]; then
-              echo "${REGISTRY}/${IMAGE_TAG_LATEST}       ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
+              echo "${REGISTRY}/${IMAGE_TAG_LATEST}       ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
             fi
             while read manifest; do
               echo manifests: 1: $(awk '{print $1}' <<< ${manifest}) 2: $(awk '{print $2}' <<< ${manifest}) 3: $(awk '{print $3}' <<< ${manifest})
@@ -399,7 +399,7 @@ jobs:
                 --argjson latest                     "${IS_LATEST}" \
                 --arg description                    "${DESCRIPTION}" \
                 --argjson hide                       "${HIDE}" \
-                '.[$tag].tags[0] = $image_tag_branch_value | .[$tag].tags[1] = $image_tag_branch_version_value | .[$tag].tags[2] = $image_tag_branch_sha_value | .[$tag].last_updated = $last_updated | .[$tag].latest = $latest | .[$tag].description = $description | .[$tag].last_updated_url = $last_updated_url | .[$tag].hide = $hide' <<< "${json}" | tee tags.json
+                '.[$tag].tags[0] = $image_tag_branch_value | .[$tag].tags[1] = $image_tag_branch_version_value | .[$tag].tags[2] = $image_tag_branch_sha_value | .[$tag].last_updated = $last_updated | .[$tag].latest = $latest | .[$tag].description = $description | .[$tag].last_updated_url = $last_updated_url | .[$tag].hide = $hide' <<< "${json}" > tags.json
             git pull
             git add .
             if git commit -m "Update tags.json [skip ci]"; then
