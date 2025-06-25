@@ -347,6 +347,7 @@ jobs:
         with:
           ref: master
       - name: Update "tags.json" File
+        uses: nick-fields/retry@v3
         env:
           IMAGE_TAG_BRANCH: ${{ needs.aggregate.outputs.image-tag-branch }}
           IMAGE_TAG_BRANCH_VERSION: ${{ needs.aggregate.outputs.image-tag-branch-version }}
@@ -394,6 +395,7 @@ jobs:
     needs: [aggregate, publish]
     steps:
       - name: Send Discord Notification
+        uses: nick-fields/retry@v3
         env:
           VERSION: ${{ needs.aggregate.outputs.version }}
           STATUS: ${{ needs.publish.result }}
@@ -405,9 +407,7 @@ jobs:
           REPOSITORY:       ${{ github.repository }}
           SHA:              ${{ github.sha }}
           SERVER_URL:       ${{ github.server_url }}
-          IMAGE_TAG_BRANCH: ${{ needs.build.outputs.image-tag-branch }}
           DISCORD_MENTIONS: ${{ vars.DISCORD_MENTIONS }}
-          PACKAGE_VERSION:  ${{ needs.build.outputs.package-version }}
         with:
           max_attempts: 3
           timeout_minutes: 5
