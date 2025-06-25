@@ -223,16 +223,6 @@ jobs:
           path: |
             ${{ steps.prep.outputs.package-version }}-*.*
 
-      # - name: Generate Tags
-      #   id: tag
-      #   run: |
-      #     echo "image_tag_full_amd64=myrepo:myimage-amd64" >> $GITHUB_OUTPUT
-      #     echo "image_tag_full_arm64=myrepo:myimage-arm64" >> $GITHUB_OUTPUT
-      #     echo "image_tag_latest=myrepo:latest" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch=myrepo:branch" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
-      #     echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
-
       - name: print outputs
         id: print
         run: |
@@ -243,12 +233,6 @@ jobs:
           echo "image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}"
           echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
 
-          echo "image_tag_full_amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
-          echo "image_tag_full_arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
-          echo "image_tag_latest:     ${{ steps.tag.outputs.image_tag_latest }}"
-          echo "image_tag_branch:     ${{ steps.tag.outputs.image_tag_branch }}"
-          echo "image_tag_branch_version: ${{ steps.tag.outputs.image_tag_branch_version }}"
-          echo "image_tag_branch_sha: ${{ steps.tag.outputs.image_tag_branch_sha }}"
 
   publish:
     runs-on: ubuntu-24.04
@@ -337,11 +321,11 @@ jobs:
             if [[ -n "${IMAGE_TAG_FULL_ARM64}" ]]; then
               IMAGE_TAG_FULL_ARM64=${REGISTRY}/${IMAGE_TAG_FULL_ARM64}
             fi
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH}         ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" > manifest.list
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_VERSION} ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
-            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_SHA}     ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH}         ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_VERSION} ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
+            echo "${REGISTRY}/${IMAGE_TAG_BRANCH_SHA}     ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
             if [[ -n "${IMAGE_TAG_LATEST}" ]]; then
-              echo "${REGISTRY}/${IMAGE_TAG_LATEST}       ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" >> manifest.list
+              echo "${REGISTRY}/${IMAGE_TAG_LATEST}       ${IMAGE_TAG_FULL_AMD64} ${IMAGE_TAG_FULL_ARM64}" | tee -a manifest.list
             fi
             while read manifest; do
               echo manifests: 1: $(awk '{print $1}' <<< ${manifest}) 2: $(awk '{print $2}' <<< ${manifest}) 3: $(awk '{print $3}' <<< ${manifest})
