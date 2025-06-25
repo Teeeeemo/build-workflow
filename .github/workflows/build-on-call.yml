@@ -15,26 +15,11 @@ jobs:
       is-latest:                ${{ steps.prep.outputs.is-latest }}
       description:              ${{ steps.prep.outputs.description }}
       hide:                     ${{ steps.prep.outputs.hide }}
-      image-tag-full-amd64:     ${{ steps.prep.outputs.image-tag-full-amd64 }}
-      image-tag-full-arm64:     ${{ steps.prep.outputs.image-tag-full-arm64 }}
+      image-tag-full-${{ matrix.architecture }}: ${{ steps.prep.outputs.image-tag-full }}
       image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
       image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
       image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
       image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
-
-      image_tag_full_amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
-      image_tag_full_arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
-      image_tag_latest:     ${{ steps.tag.outputs.image_tag_latest }}
-      image_tag_branch:     ${{ steps.tag.outputs.image_tag_branch }}
-      image_tag_branch_version: ${{ steps.tag.outputs.image_tag_branch_version }}
-      image_tag_branch_sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
-
-      # image-tag-full-amd64: ${{ steps.tag.outputs.image_tag_full_amd64 }}
-      # image-tag-full-arm64: ${{ steps.tag.outputs.image_tag_full_arm64 }}
-      # image-tag-latest:     ${{ steps.tag.outputs.image_tag_latest }}
-      # image-tag-branch:     ${{ steps.tag.outputs.image_tag_branch }}
-      # image-tag-branch-version: ${{ steps.tag.outputs.image_tag_branch_version }}
-      # image-tag-branch-sha: ${{ steps.tag.outputs.image_tag_branch_sha }}
 
       package-version:          ${{ steps.prep.outputs.package-version }}
     steps:
@@ -233,31 +218,25 @@ jobs:
           echo "image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}"
           echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
 
+  aggregate:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag-full-amd64: ${{ needs.build.outputs['image-tag-full-linux-amd64'] }}
+      image-tag-full-arm64: ${{ needs.build.outputs['image-tag-full-linux-arm64'] }}
+    steps:
+      - run: echo "Aggregation complete"
 
   publish:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         registry: [docker.io, ghcr.io]
-    needs: build
+    needs: aggregate
     steps:
     
       - name: Debug Generated Tags
         run: |
-          echo "Full AMD64: ${{ steps.tag.outputs.image_tag_full_amd64 }}"
-          echo "Full ARM64: ${{ steps.tag.outputs.image_tag_full_arm64 }}"
-          echo "Latest: ${{ steps.tag.outputs.image_tag_latest }}"
-          echo "Branch: ${{ steps.tag.outputs.image_tag_branch }}"
-          echo "Branch Version: ${{ steps.tag.outputs.image_tag_branch_version }}"
-          echo "Branch SHA: ${{ steps.tag.outputs.image_tag_branch_sha }}"
-          echo "---"
-          echo "Full AMD64: ${{ steps.tag.image-tag-full-amd64 }}"
-          echo "Full ARM64: ${{ steps.tag.image-tag-full-arm64 }}"
-          echo "Latest: ${{ steps.tag.outputs.image-tag-latest }}"
-          echo "Branch: ${{ steps.tag.outputs.image-tag-branch }}"
-          echo "Branch Version: ${{ steps.tag.outputs.image-tag-branch-version }}"
-          echo "Branch SHA: ${{ steps.tag.outputs.image-tag-branch-sha }}"
-          echo "---"
           echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }}"
           echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
           echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
@@ -308,14 +287,6 @@ jobs:
           IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image-tag-branch }}
           IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image-tag-branch-version }}
           IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image-tag-branch-sha }}
-
-          IMAGE_TAG_FULL_AMD641:     ${{ needs.build.outputs.image_tag_full_amd64 }}
-          IMAGE_TAG_FULL_ARM641:     ${{ needs.build.outputs.image_tag_full_arm64 }}
-          IMAGE_TAG_LATEST1:         ${{ needs.build.outputs.image_tag_latest }}
-          IMAGE_TAG_BRANCH1:         ${{ needs.build.outputs.image_tag_branch }}
-          IMAGE_TAG_BRANCH_VERSION1: ${{ needs.build.outputs.image_tag_branch_version }}
-          IMAGE_TAG_BRANCH_SHA1:     ${{ needs.build.outputs.image_tag_branch_sha }}
-          
           REGISTRY:                 ${{ matrix.registry }}
         with:
           max_attempts: 3
