@@ -223,15 +223,15 @@ jobs:
           path: |
             ${{ steps.prep.outputs.package-version }}-*.*
 
-      - name: Generate Tags
-        id: tag
-        run: |
-          echo "image_tag_full_amd64=myrepo:myimage-amd64" >> $GITHUB_OUTPUT
-          echo "image_tag_full_arm64=myrepo:myimage-arm64" >> $GITHUB_OUTPUT
-          echo "image_tag_latest=myrepo:latest" >> $GITHUB_OUTPUT
-          echo "image_tag_branch=myrepo:branch" >> $GITHUB_OUTPUT
-          echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
-          echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
+      # - name: Generate Tags
+      #   id: tag
+      #   run: |
+      #     echo "image_tag_full_amd64=myrepo:myimage-amd64" >> $GITHUB_OUTPUT
+      #     echo "image_tag_full_arm64=myrepo:myimage-arm64" >> $GITHUB_OUTPUT
+      #     echo "image_tag_latest=myrepo:latest" >> $GITHUB_OUTPUT
+      #     echo "image_tag_branch=myrepo:branch" >> $GITHUB_OUTPUT
+      #     echo "image_tag_branch_version=myrepo:branch-version" >> $GITHUB_OUTPUT
+      #     echo "image_tag_branch_sha=myrepo:branch-sha" >> $GITHUB_OUTPUT
 
       - name: print outputs
         id: print
