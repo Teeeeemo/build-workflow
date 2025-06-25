@@ -5,23 +5,22 @@ on:
 
 jobs:
   build:
-    # runs-on: ubuntu-24.04
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         architecture: [linux-arm64, linux-amd64]
+    runs-on: ubuntu-latest
     outputs:
-      version:                  ${{ steps.prep.outputs.version }}
-      is-latest:                ${{ steps.prep.outputs.is-latest }}
-      description:              ${{ steps.prep.outputs.description }}
-      hide:                     ${{ steps.prep.outputs.hide }}
-      image-tag-full-${{ matrix.architecture }}: ${{ steps.prep.outputs.image-tag-full }}
-      image-tag-latest:         ${{ steps.prep.outputs.image-tag-latest }}
-      image-tag-branch:         ${{ steps.prep.outputs.image-tag-branch }}
+      image-tag-full-linux-amd64: ${{ steps.prep.outputs.image-tag-full-amd64 }}
+      image-tag-full-linux-arm64: ${{ steps.prep.outputs.image-tag-full-arm64 }}
+      image-tag-latest: ${{ steps.prep.outputs.image-tag-latest }}
+      image-tag-branch: ${{ steps.prep.outputs.image-tag-branch }}
       image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}
-      image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}
-
-      package-version:          ${{ steps.prep.outputs.package-version }}
+      image-tag-branch-sha: ${{ steps.prep.outputs.image-tag-branch-sha }}
+      version: ${{ steps.prep.outputs.version }}
+      is-latest: ${{ steps.prep.outputs.is-latest }}
+      description: ${{ steps.prep.outputs.description }}
+      hide: ${{ steps.prep.outputs.hide }}
+      package-version: ${{ steps.prep.outputs.package-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -224,8 +223,17 @@ jobs:
     outputs:
       image-tag-full-amd64: ${{ needs.build.outputs['image-tag-full-linux-amd64'] }}
       image-tag-full-arm64: ${{ needs.build.outputs['image-tag-full-linux-arm64'] }}
+      image-tag-latest: ${{ needs.build.outputs['image-tag-latest'] }}
+      image-tag-branch: ${{ needs.build.outputs['image-tag-branch'] }}
+      image-tag-branch-version: ${{ needs.build.outputs['image-tag-branch-version'] }}
+      image-tag-branch-sha: ${{ needs.build.outputs['image-tag-branch-sha'] }}
+      version: ${{ needs.build.outputs.version }}
+      is-latest: ${{ needs.build.outputs.is-latest }}
+      description: ${{ needs.build.outputs.description }}
+      hide: ${{ needs.build.outputs.hide }}
+      package-version: ${{ needs.build.outputs['package-version'] }}
     steps:
-      - run: echo "Aggregation complete"
+      - run: echo "Aggregating build outputs"
 
   publish:
     runs-on: ubuntu-24.04
@@ -234,15 +242,15 @@ jobs:
         registry: [docker.io, ghcr.io]
     needs: aggregate
     steps:
-    
+      # Use aggregate outputs here, for example:
       - name: Debug Generated Tags
         run: |
-          echo "steps.prep.outputs.version=${{ steps.prep.outputs.version }}"
-          echo "steps.prep.outputs.is-latest=${{ steps.prep.outputs.is-latest }}"
-          echo "steps.prep.outputs.description=${{ steps.prep.outputs.description }}"
-          echo "steps.prep.outputs.hide=${{ steps.prep.outputs.hide }}"
-          echo "steps.prep.outputs.image-tag-full-amd64=${{ steps.prep.outputs.image-tag-full-amd64 }}"
-          echo "steps.prep.outputs.image-tag-full-arm64=${{ steps.prep.outputs.image-tag-full-arm64 }}"
+          echo "Full AMD64: ${{ needs.aggregate.outputs.image-tag-full-amd64 }}"
+          echo "Full ARM64: ${{ needs.aggregate.outputs.image-tag-full-arm64 }}"
+          echo "Latest: ${{ needs.aggregate.outputs.image-tag-latest }}"
+          echo "Branch: ${{ needs.aggregate.outputs.image-tag-branch }}"
+          echo "Branch Version: ${{ needs.aggregate.outputs.image-tag-branch-version }}"
+          echo "Branch SHA: ${{ needs.aggregate.outputs.image-tag-branch-sha }}"
           echo "steps.prep.outputs.image-tag-latest=${{ steps.prep.outputs.image-tag-latest }}"
           echo "steps.prep.outputs.image-tag-branch=${{ steps.prep.outputs.image-tag-branch }}"
           echo "steps.prep.outputs.image-tag-branch-version=${{ steps.prep.outputs.image-tag-branch-version }}"
@@ -327,24 +335,20 @@ jobs:
               docker manifest push $(awk '{print $1}' <<< ${manifest})
             done < manifest.list
 
+
   tags:
     runs-on: ubuntu-24.04
-    needs: [build, publish]
+    needs: [aggregate, publish]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: master
-
+      # Use aggregate outputs here for tags.json update, for example:
       - name: Update "tags.json" File
-        uses: nick-fields/retry@v3
         env:
-          RUN_ID:                   ${{ github.run_id }}
-          REPOSITORY:               ${{ github.repository }}
-          SERVER_URL:               ${{ github.server_url }}
-          IS_LATEST:                ${{ needs.build.outputs.is-latest }}
-          DESCRIPTION:              ${{ needs.build.outputs.description }}
-          HIDE:                     ${{ needs.build.outputs.hide }}
+          IMAGE_TAG_BRANCH: ${{ needs.aggregate.outputs.image-tag-branch }}
+          IMAGE_TAG_BRANCH_VERSION: ${{ needs.aggregate.outputs.image-tag-branch-version }}
+          IMAGE_TAG_BRANCH_SHA: ${{ needs.aggregate.outputs.image-tag-branch-sha }}
+          IS_LATEST: ${{ needs.aggregate.outputs.is-latest }}
+          DESCRIPTION: ${{ needs.aggregate.outputs.description }}
+          HIDE: ${{ needs.aggregate.outputs.hide }}
           IMAGE_TAG_BRANCH:         ${{ needs.build.outputs.image-tag-branch }}
           IMAGE_TAG_BRANCH_VERSION: ${{ needs.build.outputs.image-tag-branch-version }}
           IMAGE_TAG_BRANCH_SHA:     ${{ needs.build.outputs.image-tag-branch-sha }}
@@ -380,25 +384,26 @@ jobs:
             git pull --rebase
             git push
 
+
   notify:
     runs-on: ubuntu-24.04
     if: always()
-    needs: [build, publish]
+    needs: [aggregate, publish]
     steps:
+      # Use aggregate outputs here for notification, for example:
       - name: Send Discord Notification
-        uses: nick-fields/retry@v3
         env:
-          VERSION:          ${{ needs.build.outputs.version }}
-          STATUS:           ${{ needs.publish.result }}
+          VERSION: ${{ needs.aggregate.outputs.version }}
+          STATUS: ${{ needs.publish.result }}
+          IMAGE_TAG_BRANCH: ${{ needs.aggregate.outputs.image-tag-branch }}
+          PACKAGE_VERSION: ${{ needs.aggregate.outputs.package-version }}
           DISCORD_WEBHOOK:  ${{ secrets.DISCORD_WEBHOOK }}
           COMMIT_MESSAGE:   ${{ github.event.head_commit.message }}
           RUN_ID:           ${{ github.run_id }}
           REPOSITORY:       ${{ github.repository }}
           SHA:              ${{ github.sha }}
           SERVER_URL:       ${{ github.server_url }}
-          IMAGE_TAG_BRANCH: ${{ needs.build.outputs.image-tag-branch }}
           DISCORD_MENTIONS: ${{ vars.DISCORD_MENTIONS }}
-          PACKAGE_VERSION:  ${{ needs.build.outputs.package-version }}
         with:
           max_attempts: 3
           timeout_minutes: 5
