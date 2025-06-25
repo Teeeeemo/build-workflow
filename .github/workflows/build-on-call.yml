@@ -217,6 +217,25 @@ jobs:
           echo "image-tag-branch-version: ${{ steps.prep.outputs.image-tag-branch-version }}"
           echo "image-tag-branch-sha:     ${{ steps.prep.outputs.image-tag-branch-sha }}"
 
+      - name: Prep outputs
+        id: prep
+        run: |
+          echo "image-tag-full-${{ matrix.architecture }}:${{ needs.build.outputs['image-tag-full-linux-${{ matrix.architecture }}'] }}"
+          echo "image-tag-latest:${{ needs.build.outputs['image-tag-latest'] }}"
+          echo "image-tag-branch:${{ needs.build.outputs['image-tag-branch'] }}"
+          echo "image-tag-branch-version:${{ needs.build.outputs['image-tag-branch-version'] }}"
+          echo "image-tag-branch-sha:${{ needs.build.outputs['image-tag-branch-sha'] }}"
+          echo "version:${{ needs.build.outputs.version }}"
+          echo "is-latest:${{ needs.build.outputs.is-latest }}"
+          echo "description:${{ needs.build.outputs.description }}"
+          echo "hide:${{ needs.build.outputs.hide }}"
+          echo "package-version:${{ needs.build.outputs['package-version'] }}"
+          
+      - name: Upload outputs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: outputs-${{ matrix.architecture }}
+          path: outputs.txt
 
   aggregate:
     needs: build
